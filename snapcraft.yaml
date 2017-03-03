@@ -3,7 +3,7 @@ version: 2.4.0
 summary: Libvirt Daemon
 description: Don't use this its just for testing.
 grade: devel
-confinement: strict
+confinement: classic
 
 apps:
   libvirt-bin:
@@ -39,14 +39,33 @@ parts:
       - libusbredirparser-dev
       - zlib1g-dev
       - uuid-dev
+    stage-packages:
+      - libxml2
+      - libyajl2
+      - libnuma1
+      - libaio1
+      - libiscsi2
+      - libcurl3-gnutls
+      - librbd1
+      - librados2
+      - libcairo2
+      - libgdk-pixbuf2.0-0
+      - libpixman-1-0
+      - libgtk2.0-0
+      - libspice-server1
+      - libusb-1.0-0
+      - libusbredirparser1
+      - libx11-6
     configflags:
         - "--target-list=x86_64-softmmu i386-softmmu"
         - "--prefix=/snap/$SNAPCRAFT_PROJECT_NAME/current"
+
     organize:
       # Hack to shift installed qemu back to root of snap
       # required to ensure that pathing to files etc works at
       # runtime
-      "snap/libvirt/current/*": ""
+      # * is not used to avoid directory merge conflicts
+      "snap/libvirt/current/": "./"
   libvirt:
     source: https://libvirt.org/sources/libvirt-2.4.0.tar.xz
     plugin: autotools
@@ -75,6 +94,11 @@ parts:
       - libnuma-dev
       - python-all
       - python-six
+    stage-packages:
+      - libxml2
+      - libyajl2
+      - libnuma1
+      - libcurl3-gnutls
     configflags:
         - "--with-qemu"
         - "--without-xen"
@@ -94,12 +118,13 @@ parts:
       # Hack to shift installed libvirt back to root of snap
       # required to ensure that pathing to files etc works at
       # runtime
-      "snap/libvirt/current/*": ""
+      # * is not used to avoid directory merge conflicts
+      "snap/libvirt/current/": "./"
     filesets:
       all:
         - -etc/libvirt/libvirtd.conf
     stage: [$all]
-    snap: [$all]
+    prime: [$all]
   templates:
     after:
       - libvirt
